@@ -447,11 +447,6 @@ def run_model(params):
         residual_pct = ((y_test_actual - y_pred) / np.maximum(np.abs(y_test_actual), 1e-8)) * 100
 
         # ── Prediksi pada Data Latih & Data Validasi ──────────────────────────
-        # Meniru Gambar 7 pada jurnal acuan: menampilkan prediksi model pada
-        # subset data latih (yang benar-benar dipakai backprop) dan subset
-        # data validasi (disisihkan Keras via validation_split, TIDAK dipakai
-        # backprop) di atas data y_train aktual, untuk melihat seberapa baik
-        # model fit ke data yang sudah "dilihat" vs data yang belum.
         n_train_total = len(X_train)
         n_val = int(n_train_total * keras_val_split)
         n_fit = n_train_total - n_val
@@ -484,23 +479,10 @@ def run_model(params):
         ewma_lambda = params.get("ewma_lambda", 0.94)
 
         # ── Return yang DIPREDIKSI GRU untuk tiap hari periode test ──
-        # predicted_returns_test[k] = ln(harga_prediksi_GRU_hari_p / harga_aktual_hari_p-1) * 100
-        # Harga aktual hari p-1 dipakai sebagai basis (bukan harga prediksi
-        # hari p-1), karena itulah informasi riil yang tersedia saat model
-        # membuat prediksi untuk hari p. Ini yang membuat estimasi VaR
-        # benar-benar forward-looking dan bergantung pada keluaran GRU.
         prev_actual_prices = prices_flat[test_start_price_idx - 1: test_start_price_idx - 1 + n_test]
         predicted_returns_test = np.log(y_pred / prev_actual_prices) * 100
 
         # ── Kalibrasi skala sigma (opsional) ──
-        # Memakai irisan validation_split dari X_train (bagian training yang
-        # HANYA dipakai Keras untuk monitoring/early stopping, tidak pernah
-        # dipakai untuk update bobot GRU lewat backprop) sebagai periode
-        # kalibrasi "pseudo out-of-sample" yang sepenuhnya berada sebelum
-        # periode test — sehingga tidak ada data leakage terhadap evaluasi
-        # akhir. Tujuannya mengoreksi sigma EWMA yang terbukti secara
-        # sistematis terlalu sempit/lebar dibanding realisasi kerugian,
-        # yang biasanya menjadi penyebab utama VaR gagal uji Kupiec.
         sigma_scale = 1.0
         calib_diag = None
         if params.get("use_sigma_calibration", True):
@@ -512,13 +494,6 @@ def run_model(params):
             calib_split_idx = int(n_train * (1 - calib_frac))
             n_calib = n_train - calib_split_idx
 
-            # Ambang minimum kalibrasi dibuat tetap (bukan bergantung pada
-            # window_size_var) karena window historis untuk menghitung
-            # sigma/skew/kurtosis diambil dari returns_full secara rolling,
-            # bukan dibatasi oleh panjang periode kalibrasi n_calib itu
-            # sendiri. Syarat lama (window_size_var + 5, mis. 105) membuat
-            # kalibrasi nyaris selalu dilewati padahal datanya sebenarnya
-            # cukup untuk estimasi k yang stabil.
             min_calib_needed = 30
             if n_calib > min_calib_needed:
                 X_calib = X_train[calib_split_idx:]
@@ -537,9 +512,6 @@ def run_model(params):
                 calib_diag = {"skipped": True, "reason": "Data validation split terlalu sedikit untuk kalibrasi."}
 
         # ── Rolling-window VaR-ECF, per confidence level ──
-        # mu (lokasi) VaR-ECF berasal dari prediksi GRU (forward-looking),
-        # sementara sigma (EWMA)/skewness/kurtosis tetap dari window historis
-        # SEBELUM hari p (out-of-sample, tanpa look-ahead bias).
         var_ecf_rolling = {}
 
         for cl in params["confidence_levels"]:
@@ -1754,7 +1726,7 @@ elif st.session_state.active_page == "Hasil dan Interpretasi":
                 dari {results['window_size_var']} hari sebelumnya (bukan garis statis), dengan σ
                 yang dihitung via EWMA (λ = {results.get('ewma_lambda', 0.94):.2f}) agar lebih
                 cepat merespons lonjakan volatilitas. Garis ungu titik-titik menunjukkan μ
-                (parameter lokasi) yang bersumber dari prediksi return model GRU — inilah komponen
+                (parameter lokasi) yang bersumber dari prediksi return model GRU inilah komponen
                 yang membuat VaR bergerak mengikuti keluaran GRU. Bar berwarna
                 <strong style="color:#F43F5E">merah</strong> menandakan hari di mana kerugian
                 aktual melebihi estimasi VaR pada hari itu. Terdapat
@@ -1769,105 +1741,3 @@ elif st.session_state.active_page == "Hasil dan Interpretasi":
         st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
         st.markdown("<hr class='section-divider'>", unsafe_allow_html=True)
         st.markdown("<div style='height:16px'></div>", unsafe_allow_html=True)
-
-        # ══════════════════════════════════════════════════════════════════════
-        # BAGIAN 3: RINGKASAN DAN INTERPRETASI KOMPREHENSIF
-        # ══════════════════════════════════════════════════════════════════════
-        st.markdown("<div class='section-header'>Ringkasan dan Interpretasi Komprehensif</div>", unsafe_allow_html=True)
-        st.markdown("<div style='height:12px'></div>", unsafe_allow_html=True)
-
-        with st.expander("Baca Interpretasi Lengkap Hasil Analisis", expanded=True):
-            # Performance level
-            if results["mape"] < 10:
-                perf_level = "sangat baik (highly accurate)"
-                perf_note = "di bawah ambang batas 10% menurut klasifikasi Lewis (1982)"
-            elif results["mape"] < 20:
-                perf_level = "baik (good forecast)"
-                perf_note = "pada kisaran 10-20% menurut klasifikasi Lewis (1982)"
-            elif results["mape"] < 50:
-                perf_level = "cukup (reasonable forecast)"
-                perf_note = "pada kisaran 20-50%"
-            else:
-                perf_level = "perlu ditingkatkan (inaccurate forecast)"
-                perf_note = "di atas 50%"
-
-            # VaR summary
-            var_summary_parts = []
-            for cl, var_val in results["var_ecf"].items():
-                cl_f = float(cl)
-                var_display = var_val if var_val < 0 else -abs(var_val)
-                var_summary_parts.append(
-                    f"pada tingkat kepercayaan <strong>{cl_f*100:.0f}%</strong>, VaR-ECF sebesar "
-                    f"<strong>{var_display:.4f}%</strong> per hari "
-                    f"(potensi kerugian maksimum = {abs(var_display):.4f}% dari nilai investasi)"
-                )
-
-            interp_text = f"""
-            <div class="expander-content">
-            <strong>Alur Analisis:</strong> Data harga saham → Prediksi return oleh GRU (μ forward-looking)
-            → Estimasi σ (EWMA), skewness, kurtosis dari rolling window historis → VaR-ECF = μ<sub>GRU</sub> + z<sub>CF</sub> × σ,
-            diestimasi secara rolling-window out-of-sample.<br><br>
-
-            <strong>1. Performa Prediksi Model GRU</strong><br>
-            Model Gated Recurrent Unit (GRU) menunjukkan performa prediksi yang <strong>{perf_level}</strong>
-            dengan nilai MAPE sebesar <strong>{results['mape']:.4f}%</strong> ({perf_note}).
-            Nilai RMSE sebesar <strong>{results['rmse']:,.4f}</strong> IDR menunjukkan rata-rata deviasi
-            kuadrat prediksi dari harga aktual, sementara MAE sebesar <strong>{results['mae']:,.4f}</strong>
-            IDR merupakan rata-rata deviasi absolut.
-            Koefisien determinasi R² = <strong>{results['r2']:.4f}</strong> mengindikasikan bahwa model
-            mampu menjelaskan <strong>{results['r2']*100:.2f}%</strong> variabilitas harga saham pada
-            data uji, {"yang merupakan tingkat explanatory power yang tinggi untuk data deret waktu keuangan" if results['r2'] > 0.85 else "yang menunjukkan model cukup baik dalam menangkap pola pergerakan harga"}.
-            Selain dievaluasi secara mandiri, prediksi return dari model GRU ini juga menjadi
-            <strong>input langsung</strong> bagi perhitungan VaR-ECF pada tahap berikutnya.
-
-            <br><br>
-
-            <strong>2. Estimasi Value at Risk Terintegrasi GRU (VaR-ECF)</strong><br>
-            VaR diestimasi menggunakan Cornish-Fisher Expansion dengan formula
-            VaR<sub>t</sub> = μ<sub>t</sub> + z<sub>CF</sub> × σ, di mana <strong>μ<sub>t</sub> diambil dari
-            return yang diprediksi model GRU</strong> (forward-looking), sementara σ diestimasi
-            dengan <strong>EWMA</strong> (λ = {results.get('ewma_lambda', 0.94):.2f}) dan skewness,
-            kurtosis diestimasi dari data historis secara rolling-window agar tetap
-            <strong>mempertimbangkan penyimpangan dari normalitas</strong> yang sering ditemukan pada
-            data return keuangan (sebagaimana ditunjukkan oleh uji Jarque-Bera pada halaman Analisis
-            Deskriptif). Penggunaan EWMA (dibanding rolling standard deviation biasa) dipilih agar
-            komponen volatilitas lebih cepat merespons perubahan kondisi pasar, sehingga estimasi
-            risiko tidak murni bersandar pada data historis yang "lamban", melainkan ikut ditentukan
-            oleh keluaran model GRU dan pembobotan waktu pada σ — sehingga GRU dan VaR-ECF bekerja
-            sebagai satu kesatuan sistem prediksi risiko, bukan dua modul yang berdiri sendiri.<br><br>
-            Hasil estimasi VaR-ECF (nilai terbaru, berdasarkan prediksi GRU paling akhir):<br>
-            {"<br>".join(f"• {part}" for part in var_summary_parts)}<br><br>
-            Sebagai contoh, untuk investasi sebesar Rp100.000.000, potensi kerugian maksimum pada hari
-            perdagangan berikutnya, pada tingkat kepercayaan yang dipilih, dapat dilihat pada tabel di atas.
-
-            <br><br>
-
-            <strong>Catatan mengenai Sumber Volatilitas:</strong> Komponen σ pada VaR-ECF ini
-            diestimasi dari data historis menggunakan EWMA, bukan dari prediksi GRU, karena model
-            GRU pada sistem ini dilatih untuk memprediksi harga/return, bukan volatilitas.
-            Pengembangan lebih lanjut dapat mengarahkan GRU untuk turut memprediksi volatilitas
-            (misalnya melalui pendekatan hybrid GRU-GARCH), sehingga seluruh komponen VaR-ECF
-            sepenuhnya forward-looking.
-
-            <br><br>
-
-            <strong>3. Kesimpulan</strong><br>
-            {"Berdasarkan hasil analisis komprehensif, model GRU berhasil memprediksi harga saham dengan akurasi tinggi, dan kontribusinya sebagai komponen μ pada VaR-ECF memberikan estimasi risiko yang bersifat forward-looking. Sistem prediksi risiko kerugian investasi saham dengan GRU dan VaR-ECF ini dapat diandalkan sebagai alat bantu pengambilan keputusan investasi." if results['mape'] < 10 else "Model GRU telah menunjukkan kemampuan prediksi yang memadai dan kontribusinya sebagai komponen μ pada VaR-ECF memberikan gambaran kuantitatif mengenai potensi risiko kerugian yang bersifat forward-looking."}
-
-            <br><br>
-
-            <strong>Catatan Penting:</strong><br>
-            • Hasil estimasi VaR hanya berlaku untuk <strong>jangka waktu satu hari ke depan</strong>
-            (1-day horizon) dan bergantung pada akurasi prediksi return GRU pada hari tersebut.<br>
-            • Kondisi pasar yang ekstrem atau peristiwa tak terduga (<em>black swan events</em>) dapat
-            menghasilkan kerugian yang melampaui batas VaR yang diestimasi, termasuk bila prediksi
-            GRU meleset signifikan dari kondisi aktual.<br>
-            • Log-return digunakan sebagai ukuran perubahan harga karena bersifat <strong>time-additive</strong>
-            dan lebih sesuai dengan teori keuangan modern.<br>
-            • VaR-ECF (Cornish-Fisher Expansion) tetap mempertimbangkan skewness dan kurtosis data
-            historis, sehingga lebih robust dibanding VaR parametrik normal biasa, sementara parameter
-            lokasi (μ) bersumber dari prediksi GRU yang bersifat forward-looking dan σ diestimasi
-            secara adaptif melalui EWMA.
-            </div>
-            """
-            st.markdown(interp_text, unsafe_allow_html=True)
