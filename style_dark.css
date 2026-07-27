@@ -1,0 +1,611 @@
+/* ================================================================
+   STYLE_DARK.CSS — Sistem Prediksi Risiko Kerugian Investasi Saham
+   Tema: Premium Dark Mode (Hitam & Ungu)
+   ================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+/* ── Reset & Base ──────────────────────────────────────────────── */
+* { box-sizing: border-box; }
+
+html, body, [class*="css"] {
+    font-family: 'Tahoma', 'Segoe UI', system-ui, sans-serif !important;
+    color: #FAFAFA; /* Zinc 50 */
+}
+
+/* ── Main App Background ─────────────────────────────────────── */
+.stApp {
+    background-color: #09090B !important;
+    background-image: radial-gradient(at 0% 0%, hsla(250,50%,12%,1) 0, transparent 50%), radial-gradient(at 100% 100%, hsla(200,50%,10%,1) 0, transparent 50%) !important; /* Zinc 950 with mesh gradient */
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────── */
+[data-testid="stSidebar"] {
+    background-color: rgba(18, 18, 20, 0.75) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important; /* Glass Sidebar */
+    border-right: 1px solid #27272A !important; /* Zinc 800 */
+    min-width: 250px !important;
+    max-width: 250px !important;
+}
+
+[data-testid="stSidebar"] > div:first-child {
+    padding: 1.5rem 1rem;
+}
+
+.sidebar-title {
+    font-family: 'Arial Black', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #38BDF8; /* Purple 500 */
+    margin: 1rem 0 0.5rem 0.25rem;
+}
+
+.sidebar-divider {
+    border: none;
+    border-top: 1px solid #27272A;
+    margin: 0.75rem 0;
+}
+
+.sidebar-footer {
+    font-size: 11px;
+    color: #71717A;
+    text-align: center;
+    padding-top: 0.5rem;
+    line-height: 1.6;
+}
+
+/* Sidebar buttons */
+[data-testid="stSidebar"] .stButton > button {
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    color: #A1A1AA !important; /* Zinc 400 */
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    border-radius: 8px !important;
+    padding: 0.55rem 0.9rem !important;
+    text-align: left !important;
+    width: 100% !important;
+    justify-content: flex-start !important;
+    transition: all 0.2s ease !important;
+    letter-spacing: 0.01em;
+    margin-bottom: 4px;
+}
+
+[data-testid="stSidebar"] .stButton > button:hover {
+    background: rgba(168, 85, 247, 0.1) !important; /* Purple tinted hover */
+    color: #D8B4FE !important; /* Purple 300 */
+}
+
+/* ── Main Content Area ──────────────────────────────────────── */
+.block-container {
+    padding: 1.2rem 2.5rem 1.5rem 2.5rem !important;
+    max-width: 1400px !important;
+}
+
+/* ── Hero Section ────────────────────────────────────────────── */
+.hero-container {
+    position: relative;
+    padding: 2.5rem 3rem;
+    background: linear-gradient(135deg, rgba(24, 24, 27, 0.75), rgba(39, 39, 42, 0.5));
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(63, 63, 70, 0.8);
+    border-radius: 24px;
+    box-shadow: 0 10px 30px -5px rgba(168, 85, 247, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.hero-decoration {
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, rgba(24,24,27,0) 70%);
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.hero-content {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.hero-logo {
+    width: 110px;
+    height: auto;
+    filter: drop-shadow(0 8px 16px rgba(168, 85, 247, 0.3));
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+    100% { transform: translateY(0px); }
+}
+
+.hero-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.hero-title {
+    font-family: 'Space Grotesk', 'Arial Black', sans-serif;
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #E879F9, #38BDF8, #818CF8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-subtitle {
+    font-size: 1.05rem;
+    color: #D4D4D8;
+    line-height: 1.6;
+    max-width: 700px;
+    font-weight: 500;
+}
+
+/* ── Section Headers ─────────────────────────────────────────── */
+.section-header {
+    font-family: 'Arial Black', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #FAFAFA;
+    letter-spacing: -0.01em;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #6B21A8; /* Purple 800 */
+    display: inline-block;
+}
+
+.subsection-header {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #A1A1AA;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.75rem;
+}
+
+/* ── Page Title ──────────────────────────────────────────────── */
+.page-title {
+    font-family: 'Arial Black', sans-serif;
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: #FAFAFA;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.35rem;
+    background: linear-gradient(135deg, #38BDF8, #818CF8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.page-subtitle {
+    font-size: 0.95rem;
+    color: #A1A1AA;
+    margin-bottom: 1.5rem;
+}
+
+/* ── Info Cards ──────────────────────────────────────────────── */
+.info-card {
+    background: #18181B;
+    border: 1px solid #0369A1;
+    border-radius: 20px;
+    padding: 1.75rem;
+    height: 100%;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.info-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 25px -5px rgba(56, 189, 248, 0.15), 0 10px 10px -5px rgba(56, 189, 248, 0.05);
+    border-color: #38BDF8;
+}
+
+.info-card-icon {
+    font-size: 2.25rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+}
+
+.info-card-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #38BDF8;
+    margin-bottom: 0.5rem;
+}
+
+.info-card-value {
+    font-family: 'Space Grotesk', 'Arial Black', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #7DD3FC, #38BDF8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+.info-card-desc {
+    font-size: 0.95rem;
+    color: #A1A1AA;
+    line-height: 1.6;
+    margin-top: auto;
+}
+
+/* ── Profile & Affiliation Cards ─────────────────────────────── */
+.profile-card, .affiliation-card {
+    background: rgba(24, 24, 27, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(39, 39, 42, 0.8);
+    border-radius: 12px;
+    padding: 1rem 1.1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.profile-card { border-left: 4px solid #38BDF8; }
+.affiliation-card { border-left: 4px solid #818CF8; }
+
+.profile-name, .affil-name {
+    font-family: 'Arial Black', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #FAFAFA;
+    margin-bottom: 0.3rem;
+}
+
+.profile-nim {
+    font-size: 0.8rem;
+    background: linear-gradient(135deg, #38BDF8, #818CF8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    font-family: 'Arial Black', monospace;
+}
+
+.affil-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #3B82F6;
+    margin-bottom: 0.6rem;
+}
+
+.profile-role, .affil-dept, .affil-prodi {
+    font-size: 0.85rem;
+    color: #A1A1AA;
+    margin-bottom: 0.15rem;
+}
+
+.affil-year {
+    font-size: 0.8rem;
+    color: #71717A;
+    margin-top: 0.5rem;
+    font-family: 'Arial Black', monospace;
+}
+
+/* ── Metric Cards ────────────────────────────────────────────── */
+.metric-card {
+    background: rgba(24, 24, 27, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(39, 39, 42, 0.8);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.25s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.metric-card:hover {
+    border-color: #38BDF8;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(56, 189, 248, 0.15);
+}
+
+.metric-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #A1A1AA;
+    margin-bottom: 0.5rem;
+}
+
+.metric-val {
+    font-family: 'Arial Black', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #38BDF8, #818CF8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+}
+
+.metric-mini {
+    background: rgba(24, 24, 27, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(39, 39, 42, 0.8);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.metric-mini-val {
+    font-family: 'Arial Black', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #38BDF8, #818CF8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.01em;
+}
+
+.metric-mini-label {
+    font-size: 0.75rem;
+    color: #A1A1AA;
+    margin-top: 0.25rem;
+    font-weight: 500;
+}
+
+/* ── Alert / Message Boxes ───────────────────────────────────── */
+.note-box {
+    background: rgba(147, 51, 234, 0.1);
+    border: 1px solid rgba(147, 51, 234, 0.3);
+    border-left: 4px solid #38BDF8;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    font-size: 0.9rem;
+    color: #E9D5FF;
+    line-height: 1.6;
+}
+
+.success-box {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    border-left: 4px solid #22C55E;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    font-size: 0.9rem;
+    color: #86EFAC;
+    line-height: 1.6;
+}
+
+.warning-box {
+    background: rgba(234, 179, 8, 0.1);
+    border: 1px solid rgba(234, 179, 8, 0.3);
+    border-left: 4px solid #EAB308;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    font-size: 0.9rem;
+    color: #FDE047;
+    line-height: 1.6;
+}
+
+.interp-box {
+    background: rgba(24, 24, 27, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(39, 39, 42, 0.8);
+    border-left: 4px solid #38BDF8;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    font-size: 0.9rem;
+    color: #E4E4E7;
+    line-height: 1.6;
+}
+
+.upload-guide {
+    background: #18181B;
+    border: 1px dashed #52525B;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    font-size: 0.85rem;
+    color: #A1A1AA;
+    line-height: 1.6;
+}
+
+.expander-content {
+    font-size: 0.9rem;
+    color: #A1A1AA;
+    line-height: 1.7;
+    padding: 0.5rem;
+}
+
+/* ── Dividers ────────────────────────────────────────────────── */
+.section-divider {
+    border: none;
+    border-top: 1px solid #27272A;
+    margin: 0;
+}
+
+/* ── Streamlit Native Components Theming ─────────────────────── */
+
+/* Tabs */
+[data-testid="stTabs"] [data-testid="stTab"] {
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: #A1A1AA !important;
+    padding: 0.5rem 1.25rem !important;
+}
+
+[data-testid="stTabs"] [aria-selected="true"] {
+    color: #C084FC !important;
+    border-bottom: 2px solid #C084FC !important;
+    background: transparent !important;
+    font-weight: 600 !important;
+}
+
+/* DataFrames */
+[data-testid="stDataFrame"] {
+    border: 1px solid #27272A !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;
+}
+
+/* File uploader */
+[data-testid="stFileUploader"] {
+    background: rgba(24, 24, 27, 0.65) !important;
+    border: 2px dashed #52525B !important;
+    border-radius: 12px !important;
+    padding: 2rem !important;
+    transition: all 0.2s;
+}
+
+[data-testid="stFileUploader"]:hover {
+    border-color: #9333EA !important;
+    background: rgba(147, 51, 234, 0.05) !important;
+}
+
+/* Sliders */
+[data-testid="stSlider"] [data-baseweb="slider"] [role="slider"] {
+    background: #A855F7 !important;
+    border-color: #A855F7 !important;
+}
+
+/* Select boxes & Multiselect */
+[data-testid="stSelectbox"] [data-baseweb="select"] > div,
+[data-testid="stMultiSelect"] [data-baseweb="select"] > div {
+    background: rgba(24, 24, 27, 0.65) !important;
+    border-color: #3F3F46 !important;
+    border-radius: 8px !important;
+    color: #FAFAFA !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
+}
+
+/* Buttons (main area) */
+.main .stButton > button {
+    background: linear-gradient(135deg, #0284C7, #4F46E5) !important;
+    border: none !important;
+    color: #FFFFFF !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    border-radius: 10px !important;
+    padding: 0.65rem 1.5rem !important;
+    letter-spacing: 0.02em !important;
+    transition: all 0.25s ease !important;
+    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2) !important;
+}
+
+.main .stButton > button:hover {
+    background: linear-gradient(135deg, #0369A1, #4338CA) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 15px rgba(56, 189, 248, 0.35) !important;
+}
+
+/* Expanders */
+[data-testid="stExpander"] {
+    background: rgba(24, 24, 27, 0.65) !important;
+    border: 1px solid #27272A !important;
+    border-radius: 10px !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;
+}
+
+[data-testid="stExpander"] summary {
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    color: #FAFAFA !important;
+    padding: 1rem !important;
+}
+
+/* Spinner */
+[data-testid="stSpinner"] {
+    color: #A855F7 !important;
+}
+
+/* Progress bar */
+[data-testid="stProgress"] > div > div {
+    background: linear-gradient(90deg, #38BDF8, #818CF8) !important;
+    border-radius: 999px !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #09090B; border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: #3F3F46; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #52525B; }
+
+/* code tags */
+code {
+    background: rgba(24, 24, 27, 0.65) !important;
+    color: #D8B4FE !important;
+    padding: 0.2rem 0.4rem !important;
+    border-radius: 4px !important;
+    font-size: 0.85em !important;
+    border: 1px solid #3F3F46 !important;
+}
+
+/* ── Top Panel / Header ──────────────────────────────────────── */
+[data-testid="stHeader"] {
+    background-color: transparent !important;
+}
+
+/* Hide Streamlit default elements */
+#MainMenu { visibility: hidden; }
+footer { visibility: hidden; }
+[data-testid="stToolbar"] { visibility: hidden; }
+
+/* ── Pill Badges (Penyusun & Afiliasi) ───────────────────────── */
+.pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.pill-badge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 999px;
+    padding: 0.45rem 1.1rem;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #E0F2FE;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.pill-badge:hover {
+    background: rgba(56, 189, 248, 0.18);
+    border-color: rgba(56, 189, 248, 0.5);
+    transform: translateY(-1px);
+}
+
+.pill-label {
+    font-weight: 700;
+    color: #A1A1AA;
+    margin-right: 0.3rem;
+}
