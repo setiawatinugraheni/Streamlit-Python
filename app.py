@@ -1392,15 +1392,11 @@ elif st.session_state.active_page == "Hasil dan Interpretasi":
         st.plotly_chart(fig_train, use_container_width=True)
         st.markdown(
             """<div class="interp-box">
-                Grafik ini menunjukkan kesesuaian model pada subset data latih (merah) dan
-                data validasi (ungu) terhadap nilai aktual (biru). Data validasi adalah
-                bagian akhir dari data latih yang disisihkan Keras (<code>validation_split</code>)
-                untuk monitoring/early stopping dan tidak pernah dipakai untuk memperbarui
-                bobot GRU lewat backprop. <strong>Catatan:</strong> karena data validasi ini
-                berdekatan secara waktu dengan data latih, kesesuaian yang tinggi di sini
-                belum tentu mencerminkan generalisasi sesungguhnya — evaluasi yang lebih
-                representatif tetap merujuk pada performa di data uji (out-of-sample) di bawah,
-                yang terpisah secara waktu dan periode dari data latih.
+                Grafik ini menunjukkan hasil prediksi model dibandingkan dengan harga aktual pada
+                data latih (garis merah) dan data validasi (garis ungu). Data validasi adalah 10%
+                bagian akhir dari data latih yang disisihkan dan tidak digunakan model untuk belajar,
+                sehingga menunjukkan seberapa baik model mengikuti pola harga pada
+                data yang tidak dipakai langsung dalam proses pelatihan.
             </div>""",
             unsafe_allow_html=True,
         )
